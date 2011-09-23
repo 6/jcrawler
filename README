@@ -10,6 +10,7 @@ http://jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.
 http://pixiv.net
 
 TODO
+- better default user-agent (see restler docs)
 - auth(username, password) for mbga, mixi <-- put username+pass in env.coffee
 - parse relevant data
 - write data to CSV / DB
