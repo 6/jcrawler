@@ -16,4 +16,3 @@ r.get(url).on 'complete', (html) ->
     src: jquery
     done: (errors, window) ->
       console.log "contents of corp mission", window.$("#corp-mission").text()
-
