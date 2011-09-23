@@ -1,11 +1,13 @@
-Japan-specific:
-2ch.net (stats: http://stats.2ch.net/suzume.cgi )
-nicovideo.jp (feeds: http://www.nicovideo.jp/rss )
-jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.html )
-pixiv.net
+Sites to crawl(?):
+http://mixi.jp
+http://yahoo-mbga.jp
+http://gree.jp (account?)
+http://2ch.net (stats: http://stats.2ch.net/suzume.cgi )
 
-General:
-search.twitter.com (api: https://dev.twitter.com/docs/api/1/get/search )
+Other possible sites(?):
+http://nicovideo.jp (feeds: http://www.nicovideo.jp/rss )
+http://jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.html )
+http://pixiv.net
 
 TODO
 - auth(username, password) for mbga, mixi <-- put username+pass in env.coffee
