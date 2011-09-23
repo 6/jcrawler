@@ -10,15 +10,18 @@ jquery = fs.readFileSync(jquery_path).toString()
 class exports.JCrawler
   constructor: (@options = {}) ->
 
-  get: (url, cb_success, cb_error = null) ->
+  success: ($) ->
+    p "Success! Override this function"
+
+  error: (res) ->
+    p "Error! #{res.statusCode}"
+
+  get: (url) ->
+    self = @
     r.get(url, @options)
       .on 'success', (html, res) ->
         jsdom.env
           html: html
           src: jquery
-          done: (errors, window) ->
-            $ = window.$
-            cb_success $
-      .on 'error', (html, res) ->
-        status = res.statusCode
-        if cb_error? then cb_error status else p "ERROR: #{res.statusCode}"
+          done: (errors, window) -> self.success window.$
+      .on 'error', (html, res) -> self.error res
