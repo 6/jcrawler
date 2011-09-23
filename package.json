@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "coffee-script": "1.1.2"
-    , "spider": "0.0.2"
+    , "jsdom": "0.2.4"
+    , "restler": "0.2.1"
   },
   "devDependencies": {}
 }
