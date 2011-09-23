@@ -6,3 +6,8 @@ pixiv.net
 
 General:
 search.twitter.com (api: https://dev.twitter.com/docs/api/1/get/search )
+
+TODO
+- auth(username, password) for mbga, mixi <-- put username+pass in env.coffee
+- parse relevant data
+- write data to CSV / DB
