@@ -4,7 +4,7 @@ path = require 'path'
 jsdom = require 'jsdom'
 p = require('sys').puts
 
-jquery_path = path.join __dirname, 'jquery-1.6.4.js'
+jquery_path = path.join __dirname, 'lib/jquery-1.6.4.js'
 jquery = fs.readFileSync(jquery_path).toString()
 
 ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.186 Safari/535.1'
