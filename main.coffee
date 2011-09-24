@@ -1,4 +1,5 @@
 p = require('sys').puts
+env = require './config/env'
 mixi_crawler = require './mixi_crawler'
 
 m = new mixi_crawler.MixiCrawler()
