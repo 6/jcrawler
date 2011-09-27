@@ -1,4 +1,4 @@
-DATA_PATH = "/Users/pete/iMacros/Macros/jcrawler/data"
+FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}"
 MAX_PERSON_ID = 34440000;
 MAX_COMMUNITY_ID = 5800000;
 PERSON_URL = "http://mixi.jp/show_friend.pl?id={0}"
@@ -21,6 +21,7 @@ rand_range = function(start, end) {
 // Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
 // Note: this may not work depending on Java version(?)
 write_file = function(filename, data) {
+  iimDisplay("Writing file:"+filename);
    try {
       var out = new java.io.BufferedWriter(new java.io.FileWriter(filename));
       out.write(data);
@@ -30,6 +31,21 @@ write_file = function(filename, data) {
    catch(e) { //catch and report any errors
       alert(""+e);
    }
+};
+
+read_file = function(filename) {
+  iimDisplay("Reading file:"+filename);
+  try {
+    var f_str = "";
+    var f = new java.io.BufferedReader(new java.io.FileReader(filename));
+    var line = null;
+    while(line = f.readLine()) f_str += line+"\n";
+    f = null;
+    return f_str;
+  }
+  catch(e) {
+    alert(""+e);
+  }
 }
 
 run = function(code, n) {
@@ -45,7 +61,7 @@ run = function(code, n) {
   }
 };
 
-sleep = function(seconds) { run("WAIT SECONDS="+seconds); }
+sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 
 visit_url = function(url) { run("URL GOTO="+url); };
 
