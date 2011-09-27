@@ -10,7 +10,8 @@ http://jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.
 http://pixiv.net
 
 TODO
-- auth(username, password) for mbga, mixi <-- put username+pass in env.coffee
+- sleep function
+- main loop
 - parse relevant data
 - write data to CSV / DB
 
