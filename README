@@ -10,10 +10,10 @@ http://jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.
 http://pixiv.net
 
 TODO
-- sleep function
 - main loop
 - parse relevant data
-- write data to CSV / DB
+- write data to CSV
+- separate file for inserting CSV into DB
 
 PEOPLE STATS
 - what % use each feature? how much do they use it? (eg how many albums)
