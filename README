@@ -13,3 +13,9 @@ TODO
 - auth(username, password) for mbga, mixi <-- put username+pass in env.coffee
 - parse relevant data
 - write data to CSV / DB
+
+STATS
+- what % use each feature? how much do they use it? (eg how many albums)
+- how does usage % change over time? (eg people started to share more photos)
+- friends: how much variance in location/age?
+- how many people do they actually interact with among their "friends"? who?
