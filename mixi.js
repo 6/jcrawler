@@ -1,3 +1,4 @@
+DATA_PATH = "/Users/pete/iMacros/Macros/jcrawler/data"
 MAX_PERSON_ID = 34440000;
 MAX_COMMUNITY_ID = 5800000;
 PERSON_URL = "http://mixi.jp/show_friend.pl?id={0}"
