@@ -1,5 +1,5 @@
 MAX_PERSON_ID = 34440000;
-PROFILE_URL = "http://mixi.jp/show_friend.pl?id={0}"
+PERSON_URL = "http://mixi.jp/show_friend.pl?id={0}"
 COMMUNITY_URL = "http://mixi.jp/view_community.pl?id={0}"
 
 // Source: http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format/4256130#4256130
@@ -39,7 +39,7 @@ is_logged_in = function(){
 
 random_person_id = function() {
   var rand_id = rand_range(1, MAX_PERSON_ID);
-  visit_url(PROFILE_URL.format(rand_id));
+  visit_url(PERSON_URL.format(rand_id));
   title = run("TAG POS=1 TYPE=TITLE ATTR=* EXTRACT=TXT", 1);
   if(title.substring(0,1) == "[") return rand_id;
   else return random_person_id();
