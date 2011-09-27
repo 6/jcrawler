@@ -44,6 +44,8 @@ run = function(code, n) {
   }
 };
 
+sleep = function(seconds) { run("WAIT SECONDS="+seconds); }
+
 visit_url = function(url) { run("URL GOTO="+url); };
 
 is_logged_in = function(){
