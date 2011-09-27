@@ -14,8 +14,12 @@ TODO
 - parse relevant data
 - write data to CSV / DB
 
-STATS
+PEOPLE STATS
 - what % use each feature? how much do they use it? (eg how many albums)
 - how does usage % change over time? (eg people started to share more photos)
-- friends: how much variance in location/age?
+- friends: how much variance in location/age/gender/interests?
 - how many people do they actually interact with among their "friends"? who?
+
+GROUP STATS
+- how much activity per group? is there an optimal group size?
+- how much variance in location/age/gender among group members?
