@@ -40,6 +40,7 @@ read_file = function(filename) {
     var f = new java.io.BufferedReader(new java.io.FileReader(filename));
     var line = null;
     while(line = f.readLine()) f_str += line+"\n";
+    f.close();
     f = null;
     return f_str;
   }
