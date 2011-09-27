@@ -1,4 +1,5 @@
 MAX_PERSON_ID = 34440000;
+MAX_COMMUNITY_ID = 5800000;
 PERSON_URL = "http://mixi.jp/show_friend.pl?id={0}"
 COMMUNITY_URL = "http://mixi.jp/view_community.pl?id={0}"
 
@@ -44,6 +45,14 @@ random_person_id = function() {
   if(title.substring(0,1) == "[") return rand_id;
   else return random_person_id();
 };
+
+random_community_id = function() {
+  var rand_id = rand_range(1, MAX_COMMUNITY_ID);
+  visit_url(COMMUNITY_URL.format(rand_id));
+  title = run("TAG POS=1 TYPE=TITLE ATTR=* EXTRACT=TXT", 1);
+  if(title.substring(0,1) == "[") return rand_id;
+  else return random_community_id();
+}
 
 main = function() {
   iimDisplay("Check if logged in to Mixi...");
