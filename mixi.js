@@ -17,6 +17,20 @@ rand_range = function(start, end) {
   return Math.floor(Math.random()*end - 1) + start;
 };
 
+// Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
+// Note: this may not work depending on Java version(?)
+write_file = function(filename, data) {
+   try {
+      var out = new java.io.BufferedWriter(new java.io.FileWriter(filename));
+      out.write(data);
+      out.close();
+      out=null;
+   }
+   catch(e) { //catch and report any errors
+      alert(""+e);
+   }
+}
+
 run = function(code, n) {
   var retcode = iimPlay("CODE: "+code);
   if(retcode != 1) {
@@ -25,7 +39,7 @@ run = function(code, n) {
   }
   if(n) {
     var extract = iimGetLastExtract(n);
-    if(extract == "#EANF#") return false; // nothing was found
+    if(extract == "#EANF#") return false; // "Extraction Anchor Not Found"
     return extract;
   }
 };
