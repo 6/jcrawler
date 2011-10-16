@@ -1,9 +1,25 @@
+var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}"
 var URL_BBS_LIST = "http://menu.2ch.net/bbstable.html";
 var THREAD = "http://{0}.2ch.net/test/read.cgi/{1}/{2}/";
 var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
 var REGEX_2CH_HREF = new RegExp("http://[^\.]+\.2ch\.net/");
 var REGEX_BOARD_HREF = new RegExp("http://([^\.]+)\.2ch\.net/([^/]+)");
 var IGNORE_BBS_SUBDOMAIN = ["headline", "www", "info", "watch", "shop", "epg", "find", "be", "newsnavi", "irc"];
+
+// Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
+// Note: this may not work depending on Java version(?)
+write_file = function(path, data) {
+  iimDisplay("Writing file:"+path);
+   try {
+      var out = new java.io.BufferedWriter(new java.io.FileWriter(path));
+      out.write(data);
+      out.close();
+      out=null;
+   }
+   catch(e) { //catch and report any errors
+      alert(""+e);
+   }
+};
 
 // Source: http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format/4256130#4256130
 String.prototype.format = function() {
@@ -31,6 +47,16 @@ random_range = function(from, to){
   }
   return val;
 };
+
+// Source: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date
+function date_string(d){
+ function pad(n){return n<10 ? '0'+n : n}
+ return d.getUTCFullYear()+''
+      + pad(d.getUTCMonth()+1)+''
+      + pad(d.getUTCDate())+''
+      + pad(d.getUTCHours())+''
+      + pad(d.getUTCMinutes())+''
+      + pad(d.getUTCSeconds())}
 
 srswor = function(list, n) {
   var new_list = [];
@@ -101,8 +127,12 @@ thread_link = function(subdomain, board, thread) {
   return THREAD.format(subdomain, board, thread);
 };
 
-raw_messages = function() {
-  return run("TAG POS=1 TYPE=DL ATTR=CLASS:thread EXTRACT=HTM", 1);
+save_thread = function(link, thread) {
+  visit_url(link);
+  var raw_messages = run("TAG POS=1 TYPE=DL ATTR=CLASS:thread EXTRACT=HTM", 1);
+  var filename = date_string(new Date())+"_"+thread;
+  var path = FILE_PATH.format("data/2ch/"+filename);
+  write_file(path, raw_messages);
 };
 
 main = function() {
@@ -110,6 +140,8 @@ main = function() {
   //http://yuzuru.2ch.net/billiards/subback.html
   //alert(board_url_info("http://yuzuru.2ch.net/billiards/"));
   //alert(random_threads_list(10));
+  var thread = "1287916288";
+  save_thread(thread_link("yuzuru", "billiards", thread),thread)
 };
 
 main();
