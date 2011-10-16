@@ -1,0 +1,19 @@
+{
+  "author": "",
+  "name": "jcrawler",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/6/jcrawler.git"
+  },
+  "engines": {
+    "node": "v0.4.11"
+  },
+  "dependencies": {
+    "coffee-script": "1.1.2"
+    , "jsdom": "0.2.4"
+    , "request": "2.1.1"
+    , "iconv": "1.1.2"
+  },
+  "devDependencies": {}
+}
