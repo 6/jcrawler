@@ -101,11 +101,16 @@ thread_link = function(subdomain, board, thread) {
   return THREAD.format(subdomain, board, thread);
 };
 
+raw_messages = function() {
+  return run("TAG POS=1 TYPE=DL ATTR=CLASS:thread EXTRACT=HTM", 1);
+};
+
 main = function() {
   //alert(random_boards_list(10));
   //http://yuzuru.2ch.net/billiards/subback.html
   //alert(board_url_info("http://yuzuru.2ch.net/billiards/"));
   //alert(random_threads_list(10));
+  messages_list();
 };
 
 main();
