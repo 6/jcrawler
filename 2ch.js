@@ -110,7 +110,6 @@ main = function() {
   //http://yuzuru.2ch.net/billiards/subback.html
   //alert(board_url_info("http://yuzuru.2ch.net/billiards/"));
   //alert(random_threads_list(10));
-  messages_list();
 };
 
 main();
