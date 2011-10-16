@@ -60,7 +60,6 @@ save_profile = function(link, profile) {
 
 save_group = function(link, group) {
   var raw_group = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
-  alert(raw_group);
   var filename = date_string(new Date())+"_"+group+".data";
   var path = FILE_PATH.format("data/mbga/group/"+filename);
   write_file(path, raw_group);
