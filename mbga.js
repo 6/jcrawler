@@ -15,6 +15,16 @@ write_file = function(path, data) {
    }
 };
 
+// Source: http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format/4256130#4256130
+String.prototype.format = function() {
+  var formatted = this;
+  for (var i = 0; i < arguments.length; i++) {
+    var regexp = new RegExp('\\{'+i+'\\}', 'gi');
+    formatted = formatted.replace(regexp, arguments[i]);
+  }
+  return formatted;
+};
+
 // Source: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date
 function date_string(d){
  function pad(n){return n<10 ? '0'+n : n}
@@ -48,8 +58,17 @@ save_profile = function(link, profile) {
   write_file(path, raw_profile);
 };
 
+save_group = function(link, group) {
+  var raw_group = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
+  alert(raw_group);
+  var filename = date_string(new Date())+"_"+group+".data";
+  var path = FILE_PATH.format("data/mbga/group/"+filename);
+  write_file(path, raw_group);
+};
+
 main = function() {
-  save_profile("http://yahoo-mbga.jp/10086","10086");
+  //save_profile("http://yahoo-mbga.jp/10086","10086");
+  save_group("http://yahoo-mbga.jp/group/31966079", "31966079");
 };
 
 main();
