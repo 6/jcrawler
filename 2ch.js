@@ -60,8 +60,8 @@ function date_string(d){
 
 srswor = function(list, n) {
   var new_list = [];
-  while(new_list.length < n) {
-    var rand_idx = random_range(0, new_list.length - 1);
+  while(new_list.length < n && list.length > 0) {
+    var rand_idx = random_range(0, list.length - 1);
     new_list.push(list.splice(rand_idx, 1));
   }
   return new_list;
