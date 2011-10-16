@@ -1,4 +1,4 @@
-var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}"
+var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}";
 var URL_BBS_LIST = "http://menu.2ch.net/bbstable.html";
 var THREAD = "http://{0}.2ch.net/test/read.cgi/{1}/{2}/";
 var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
@@ -11,7 +11,7 @@ var IGNORE_BBS_SUBDOMAIN = ["headline", "www", "info", "watch", "shop", "epg", "
 write_file = function(path, data) {
   iimDisplay("Writing file:"+path);
    try {
-      var out = new java.io.BufferedWriter(new java.io.FileWriter(path));
+      var out = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(new java.io.File(path)), "Shift_JIS"));
       out.write(data);
       out.close();
       out=null;
@@ -131,7 +131,7 @@ save_thread = function(link, thread) {
   visit_url(link);
   var raw_messages = run("TAG POS=1 TYPE=DL ATTR=CLASS:thread EXTRACT=HTM", 1);
   var filename = date_string(new Date())+"_"+thread;
-  var path = FILE_PATH.format("data/2ch/"+filename);
+  var path = FILE_PATH.format("data/2ch/"+filename+".data");
   write_file(path, raw_messages);
 };
 
