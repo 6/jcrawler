@@ -97,7 +97,7 @@ sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 visit_url = function(url) { run("URL GOTO="+url); };
 
 random_boards_list = function(n) {
-  visit_url("file://"+FILE_PATH.format("/sources/bbstable.html"));
+  visit_url("file://"+FILE_PATH.format("sources/bbstable.html"));
   var raw = run("TAG POS=1 TYPE=FONT ATTR=* EXTRACT=HTM", 1);
   var raw_list = raw.match(REGEX_HREF);
   var mod_list = [];
