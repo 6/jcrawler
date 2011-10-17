@@ -4,7 +4,7 @@ var THREAD = "http://{0}.2ch.net/test/read.cgi/{1}/{2}/";
 var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
 var REGEX_2CH_HREF = new RegExp("http://[^\.]+\.2ch\.net/");
 var REGEX_BOARD_HREF = new RegExp("http://([^\.]+)\.2ch\.net/([^/]+)");
-var IGNORE_BBS_SUBDOMAIN = ["headline", "www", "info", "watch", "shop", "epg", "find", "be", "newsnavi", "irc"];
+var IGNORE_BBS_SUBDOMAIN = ["qb5","www2", "headline", "www", "info", "watch", "shop", "epg", "find", "be", "newsnavi", "irc"];
 
 // Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
 // Note: this may not work depending on Java version(?)
@@ -38,6 +38,13 @@ if (typeof String.prototype.startsWith != 'function') {
   };
 }
 
+// Source: http://stackoverflow.com/questions/280634/endswith-in-javascript
+if (typeof String.prototype.endsWith != 'function') {
+  String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+}
+
 // inclusive random range
 // Source: http://www.admixweb.com/2010/08/24/javascript-tip-get-a-random-number-between-two-integers/
 random_range = function(from, to){
@@ -58,7 +65,13 @@ function date_string(d){
       + pad(d.getUTCMinutes())+''
       + pad(d.getUTCSeconds())}
 
-srswor = function(list, n) {
+srswor = function(list, n, ignore) {
+  if(!ignore) ignore = [];
+  for(var i=0; i<ignore.length; i++) {
+    var idx = list.indexOf(ignore[i]);
+    if(idx >= 0) list.splice(idx, 1);
+  }
+  if(list.length < n) return list;
   var new_list = [];
   while(new_list.length < n && list.length > 0) {
     var rand_idx = random_range(0, list.length - 1);
@@ -107,14 +120,20 @@ random_boards_list = function(n) {
   return srswor(mod_list, n);
 };
 
-random_threads_list = function(n) {
+random_threads_list = function(board_url, n, ignore) {
+  visit_url(subback_board_url(board_url));
   var raw = run("TAG POS=1 TYPE=SMALL ATTR=* EXTRACT=HTM", 1);
   var list = raw.match(REGEX_HREF);
   var mod_list = [];
   for(var i=0; i<list.length; i++) {
     mod_list.push(list[i].substring(6, list[i].length - 5));
   }
-  return srswor(mod_list, n);
+  return srswor(mod_list, n, ignore);
+};
+
+subback_board_url = function(board_url) {
+  if(!board_url.endsWith("/")) board_url += "/";
+  return board_url + "subback.html";
 };
 
 board_url_info = function(url_string) {
@@ -127,23 +146,32 @@ thread_link = function(subdomain, board, thread) {
   return THREAD.format(subdomain, board, thread);
 };
 
-save_thread = function(link, thread) {
-  visit_url(link);
+save_thread = function(board_url, thread) {
+  var info = board_url_info(board_url);
+  var subdomain = info[0];
+  var board = info[1];
+  visit_url(thread_link(subdomain, board, thread));
   var raw_messages = run("TAG POS=1 TYPE=DL ATTR=CLASS:thread EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+thread;
+  var filename = date_string(new Date())+"_"+subdomain+"_"+board+"_"+thread;
   var path = FILE_PATH.format("data/2ch/"+filename+".data");
   write_file(path, raw_messages);
 };
 
 main = function() {
-  var boards = random_boards_list(5);
-  alert(boards);
-  //alert(random_boards_list(10));
-  //http://yuzuru.2ch.net/billiards/subback.html
-  //alert(board_url_info("http://yuzuru.2ch.net/billiards/"));
-  //alert(random_threads_list(10));
-  var thread = "1287916288";
-  //save_thread(thread_link("yuzuru", "billiards", thread),thread)
+  for(var m=0; m<3; m++) {
+    var saved_threads = [];
+    var boards = random_boards_list(100);
+    for(var i=0; i<boards.length; i++) {
+      var board_url = String(boards[i]);
+      var threads = random_threads_list(board_url, 5, saved_threads);
+      for(var j=0; j<threads.length; j++) {
+        sleep(random_range(4, 6));
+        save_thread(board_url, threads[j])
+        saved_threads.push(threads[j]);
+      }
+      sleep(random_range(2, 4));
+    }
+  }
 };
 
 main();
