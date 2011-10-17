@@ -84,7 +84,7 @@ sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 visit_url = function(url) { run("URL GOTO="+url); };
 
 random_boards_list = function(n) {
-  visit_url(URL_BBS_LIST);
+  visit_url("file://"+FILE_PATH.format("/sources/bbstable.html"));
   var raw = run("TAG POS=1 TYPE=FONT ATTR=* EXTRACT=HTM", 1);
   var raw_list = raw.match(REGEX_HREF);
   var mod_list = [];
@@ -136,12 +136,14 @@ save_thread = function(link, thread) {
 };
 
 main = function() {
+  var boards = random_boards_list(5);
+  alert(boards);
   //alert(random_boards_list(10));
   //http://yuzuru.2ch.net/billiards/subback.html
   //alert(board_url_info("http://yuzuru.2ch.net/billiards/"));
   //alert(random_threads_list(10));
   var thread = "1287916288";
-  save_thread(thread_link("yuzuru", "billiards", thread),thread)
+  //save_thread(thread_link("yuzuru", "billiards", thread),thread)
 };
 
 main();
