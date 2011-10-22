@@ -25,6 +25,30 @@ String.prototype.format = function() {
   return formatted;
 };
 
+// Source: http://stackoverflow.com/questions/646628/javascript-startswith
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
+
+// Source: http://stackoverflow.com/questions/280634/endswith-in-javascript
+if (typeof String.prototype.endsWith != 'function') {
+  String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+}
+
+// inclusive random range
+// Source: http://www.admixweb.com/2010/08/24/javascript-tip-get-a-random-number-between-two-integers/
+random_range = function(from, to){
+  var val = Math.floor(Math.random() * (to - from + 1) + from);
+  if(val > to) { // in case Math.random() can produce 1.0 (does it?)
+    val = to;
+  }
+  return val;
+};
+
 // Source: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date
 function date_string(d){
  function pad(n){return n<10 ? '0'+n : n}
@@ -34,6 +58,21 @@ function date_string(d){
       + pad(d.getUTCHours())+''
       + pad(d.getUTCMinutes())+''
       + pad(d.getUTCSeconds())}
+
+srswor = function(list, n, ignore) {
+  if(!ignore) ignore = [];
+  for(var i=0; i<ignore.length; i++) {
+    var idx = list.indexOf(ignore[i]);
+    if(idx >= 0) list.splice(idx, 1);
+  }
+  if(list.length < n) return list;
+  var new_list = [];
+  while(new_list.length < n && list.length > 0) {
+    var rand_idx = random_range(0, list.length - 1);
+    new_list.push(list.splice(rand_idx, 1));
+  }
+  return new_list;
+};
 
 run = function(code, n) {
   var retcode = iimPlay("CODE: "+code);
