@@ -172,6 +172,7 @@ main = function() {
       visited_groups.push(item.id);
       queue = queue.concat(extract_profiles());
     }
+    sleep(random_range(3, 8));
   }
 };
 
