@@ -114,7 +114,18 @@ visit_group = function(id) {
 };
 
 extract_profiles = function() {
-  
+  var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circlemem-sec EXTRACT=HTM", 1);
+  var links = raw.match(REGEX_HREF);
+  links.pop(); // last link isn't a profile
+  var mod_links = [];
+  for(var i=0; i<links.length; i++) {
+    if(i % 2 == 0)
+      mod_links.push({
+        type:"profile",
+        id: links[i].substring(7, links[i].length - 1)
+      });
+  }
+  return mod_links;
 };
 
 extract_groups = function() {
