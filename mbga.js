@@ -175,7 +175,7 @@ main = function() {
     }
     sleep(random_range(3, 8));
     // if visited > 3000 people and next link is a group, finish
-    if(visited_profiles.length > 3000 && queue[1].type !== "profile") break; 
+    if(visited_profiles.length > 3000 && queue[0].type !== "profile") break; 
   }
 };
 
