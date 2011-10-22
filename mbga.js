@@ -162,7 +162,7 @@ main = function() {
     if(item.type === "profile") {
       if(visited_profiles.indexOf(item.id) >= 0) continue;
       visit_url(URL_PROFILE.format(item.id));
-      save_profile(item.id);
+      save_profile(item.id, item.source);
       visited_profiles.push(item.id);
       queue = queue.concat(extract_groups());
     }
