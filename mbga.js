@@ -86,7 +86,7 @@ save_profile = function(id, source_id) {
   var raw_disc = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof4-lay EXTRACT=HTM", 1);
   var raw_greet = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof6-lay EXTRACT=HTM", 1);
   var raw_test = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof5-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+id+"_"+source_id+"_{0}_.data";
+  var filename = date_string(new Date())+"_"+id+"_"+source_id+"_{0}.data";
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("demo")), raw_demo);
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("qa")), raw_qa);
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("diary")), raw_diary);
@@ -157,7 +157,7 @@ main = function() {
   queue = queue.concat(seed_nodes);
   var visited_groups = [];
   var visited_profiles = [];
-  while(queue.length > 0 && visited_groups.length < 500){
+  while(queue.length > 0){
     var item = queue.shift();
     if(item.type === "profile") {
       if(visited_profiles.indexOf(item.id) >= 0) continue;
@@ -174,6 +174,8 @@ main = function() {
       queue = queue.concat(extract_profiles(item.id));
     }
     sleep(random_range(3, 8));
+    // if visited > 3000 people and next link is a group, finish
+    if(visited_profiles.length > 3000 && queue[1].type !== "profile") break; 
   }
 };
 
