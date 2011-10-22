@@ -63,21 +63,6 @@ function date_string(d){
       + pad(d.getUTCMinutes())+''
       + pad(d.getUTCSeconds())}
 
-srswor = function(list, n, ignore) {
-  if(!ignore) ignore = [];
-  for(var i=0; i<ignore.length; i++) {
-    var idx = list.indexOf(ignore[i]);
-    if(idx >= 0) list.splice(idx, 1);
-  }
-  if(list.length < n) return list;
-  var new_list = [];
-  while(new_list.length < n && list.length > 0) {
-    var rand_idx = random_range(0, list.length - 1);
-    new_list.push(list.splice(rand_idx, 1));
-  }
-  return new_list;
-};
-
 run = function(code, n) {
   var retcode = iimPlay("CODE: "+code);
   if(retcode != 1) {
