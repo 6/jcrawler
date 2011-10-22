@@ -101,10 +101,13 @@ save_profile = function(id) {
 };
 
 save_group = function(id) {
-  var raw_group = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+id+".data";
-  var path = FILE_PATH.format("data/mbga/group/"+filename);
-  write_file(path, raw_group);
+  var raw_meta = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
+  var raw_msg = run("TAG POS=1 TYPE=DIV ATTR=CLASS:crcltopic-lay EXTRACT=HTM", 1);
+  var filename = date_string(new Date())+"_"+id+"_{0}.data";
+  var path_meta = FILE_PATH.format("data/mbga/group/"+filename.format("meta"));
+  var path_msg = FILE_PATH.format("data/mbga/group/"+filename.format("msg"));
+  write_file(path_meta, raw_meta);
+  write_file(path_msg, raw_msg);
 };
 
 extract_profiles = function() {
