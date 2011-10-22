@@ -1,5 +1,7 @@
 var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}";
 var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
+var URL_PROFILE = "http://yahoo-mbga.jp/{0}";
+var URL_GROUP = "http://yahoo-mbga.jp/group/{0}";
 
 // Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
 // Note: this may not work depending on Java version(?)
@@ -105,14 +107,6 @@ save_group = function(id) {
   write_file(path, raw_group);
 };
 
-visit_profile = function(id) {
-  
-};
-
-visit_group = function(id) {
-  
-};
-
 extract_profiles = function() {
   var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circlemem-sec EXTRACT=HTM", 1);
   var links = raw.match(REGEX_HREF);
@@ -154,14 +148,14 @@ main = function() {
     var item = queue.shift();
     if(item["type"] === "profile") {
       if(visited_profiles.indexOf(item["id"]) < 0) continue;
-      visit_profile(item["id"]);
+      visit_url(URL_PROFILE.format(item["id"]));
       save_profile(item["id"]);
       visited_profiles.push(item["id"]);
       queue.concat(extract_groups());
     }
     else {
       if(visited_groups.indexOf(item["id"]) < 0) continue;
-      visit_group(item["id"]);
+      visit_url(URL_GROUP.format(item["id"]));
       save_group(item["id"]);
       visited_groups.push(item["id"]);
       queue.concat(extract_profiles());
