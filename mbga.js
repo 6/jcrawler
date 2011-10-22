@@ -1,5 +1,6 @@
 var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}";
 var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
+var REGEX_IMGSRC = new RegExp("src=\"[^\"]+\"", "gi");
 var URL_PROFILE = "http://yahoo-mbga.jp/{0}";
 var URL_GROUP = "http://yahoo-mbga.jp/group/{0}";
 
@@ -94,10 +95,26 @@ sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 visit_url = function(url) { run("URL GOTO="+url); };
 
 save_profile = function(id) {
-  var raw_profile = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof1-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+id+".data";
-  var path = FILE_PATH.format("data/mbga/person/"+filename);
-  write_file(path, raw_profile);
+  var raw_demo = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof1-lay EXTRACT=HTM", 1);
+  var raw_qa = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof2-lay EXTRACT=HTM", 1);
+  var raw_diary = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof3-lay EXTRACT=HTM", 1);
+  var raw_disc = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof4-lay EXTRACT=HTM", 1);
+  var raw_greet = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof6-lay EXTRACT=HTM", 1);
+  var raw_test = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof5-lay EXTRACT=HTM", 1);
+  var filename = date_string(new Date())+"_"+id+"_{0}.data";
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("demo")), raw_demo);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("qa")), raw_qa);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("diary")), raw_diary);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("disc")), raw_disc);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("greet")), raw_greet);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("test")), raw_test);
+  write_file(FILE_PATH.format("data/mbga/person/"+filename.format("img")), avatar_url());
+};
+
+avatar_url = function() {
+  var raw = run("TAG POS=1 TYPE=DIV ATTR=CLASS:lv3-ava-wrap EXTRACT=HTM", 1);
+  var src = raw.match(REGEX_IMGSRC)[0]
+  return src.substring(5, src.length - 1);
 };
 
 save_group = function(id) {
