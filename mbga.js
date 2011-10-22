@@ -1,4 +1,5 @@
 var FILE_PATH = "/Users/pete/iMacros/Macros/jcrawler/{0}";
+var REGEX_HREF = new RegExp("href=\"[^\"]+\"", "gi");
 
 // Source: http://forum.iopus.com/viewtopic.php?f=11&t=5267
 // Note: this may not work depending on Java version(?)
@@ -117,7 +118,18 @@ extract_profiles = function() {
 };
 
 extract_groups = function() {
-  
+  var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circleentry-sec EXTRACT=HTM", 1);
+  var links = raw.match(REGEX_HREF);
+  links.pop(); // last link isn't a group link
+  var mod_links = [];
+  for(var i=0; i<links.length; i++) {
+    if(i % 2 == 0)
+      mod_links.push({
+        type:"group",
+        id: links[i].substring(13, links[i].length - 1)
+      });
+  }
+  return mod_links;
 };
 
 main = function() {
