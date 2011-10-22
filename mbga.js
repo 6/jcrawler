@@ -90,23 +90,60 @@ run = function(code, n) {
 sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 visit_url = function(url) { run("URL GOTO="+url); };
 
-save_profile = function(link, profile) {
+save_profile = function(id) {
   var raw_profile = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof1-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+profile+".data";
+  var filename = date_string(new Date())+"_"+id+".data";
   var path = FILE_PATH.format("data/mbga/person/"+filename);
   write_file(path, raw_profile);
 };
 
-save_group = function(link, group) {
+save_group = function(id) {
   var raw_group = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+group+".data";
+  var filename = date_string(new Date())+"_"+id+".data";
   var path = FILE_PATH.format("data/mbga/group/"+filename);
   write_file(path, raw_group);
 };
 
+visit_profile = function(id) {
+  
+};
+
+visit_group = function(id) {
+  
+};
+
+extract_profiles = function() {
+  
+};
+
+extract_groups = function() {
+  
+};
+
 main = function() {
   //save_profile("http://yahoo-mbga.jp/10086","10086");
-  save_group("http://yahoo-mbga.jp/group/31966079", "31966079");
+  //save_group("http://yahoo-mbga.jp/group/31966079", "31966079");
+  
+  var queue = []; // TODO seed nodes
+  var visited_groups = [];
+  var visited_profiles = [];
+  while(queue.length > 0){
+    var item = queue.shift();
+    if(item["type"] === "profile") {
+      if(visited_profiles.indexOf(item["id"]) < 0) continue;
+      visit_profile(item["id"]);
+      save_profile(item["id"]);
+      visited_profiles.push(item["id"]);
+      queue.concat(extract_groups());
+    }
+    else {
+      if(visited_groups.indexOf(item["id"]) < 0) continue;
+      visit_group(item["id"]);
+      save_group(item["id"]);
+      visited_groups.push(item["id"]);
+      queue.concat(extract_profiles());
+    }
+  }
 };
 
 main();
