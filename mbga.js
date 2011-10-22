@@ -79,14 +79,14 @@ run = function(code, n) {
 sleep = function(seconds) { run("WAIT SECONDS="+seconds); };
 visit_url = function(url) { run("URL GOTO="+url); };
 
-save_profile = function(id) {
+save_profile = function(id, source_id) {
   var raw_demo = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof1-lay EXTRACT=HTM", 1);
   var raw_qa = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof2-lay EXTRACT=HTM", 1);
   var raw_diary = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof3-lay EXTRACT=HTM", 1);
   var raw_disc = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof4-lay EXTRACT=HTM", 1);
   var raw_greet = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof6-lay EXTRACT=HTM", 1);
   var raw_test = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof5-lay EXTRACT=HTM", 1);
-  var filename = date_string(new Date())+"_"+id+"_{0}.data";
+  var filename = date_string(new Date())+"_"+id+"_"+source_id+"_{0}_.data";
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("demo")), raw_demo);
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("qa")), raw_qa);
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("diary")), raw_diary);
@@ -112,7 +112,7 @@ save_group = function(id) {
   write_file(path_msg, raw_msg);
 };
 
-extract_profiles = function() {
+extract_profiles = function(source_id) {
   var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circlemem-sec EXTRACT=HTM", 1);
   var links = raw.match(REGEX_HREF);
   links.pop(); // last link isn't a profile
@@ -121,7 +121,8 @@ extract_profiles = function() {
     if(i % 2 == 0)
       mod_links.push({
         type:"profile",
-        id: links[i].substring(7, links[i].length - 1)
+        id: links[i].substring(7, links[i].length - 1),
+        source: source_id
       });
   }
   return mod_links;
@@ -170,7 +171,7 @@ main = function() {
       visit_url(URL_GROUP.format(item.id));
       save_group(item.id);
       visited_groups.push(item.id);
-      queue = queue.concat(extract_profiles());
+      queue = queue.concat(extract_profiles(item.id));
     }
     sleep(random_range(3, 8));
   }
