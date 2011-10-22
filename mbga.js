@@ -158,27 +158,34 @@ extract_groups = function() {
 };
 
 main = function() {
-  //save_profile("http://yahoo-mbga.jp/10086","10086");
-  //save_group("http://yahoo-mbga.jp/group/31966079", "31966079");
-  
-  var queue = []; // TODO seed nodes
+  // randomly generated valid group IDs using random number generator
+  // note: mgba seems to have skipped IDs from ~2,000,000 to ~30,000,000
+  var seed_nodes = [
+    {type: "group", id: "30704159"}
+    , {type: "group", id: "1901844"}
+    , {type: "group", id: "30945349"} // example of no threads
+    , {type: "group", id: "487069"} 
+    , {type: "group", id: "1719377"} // example of single thread
+  ];
+  var queue = [];
+  queue = queue.concat(seed_nodes);
   var visited_groups = [];
   var visited_profiles = [];
-  while(queue.length > 0){
+  while(queue.length > 0 && visited_groups.length < 500){
     var item = queue.shift();
-    if(item["type"] === "profile") {
-      if(visited_profiles.indexOf(item["id"]) < 0) continue;
-      visit_url(URL_PROFILE.format(item["id"]));
-      save_profile(item["id"]);
-      visited_profiles.push(item["id"]);
-      queue.concat(extract_groups());
+    if(item.type === "profile") {
+      if(visited_profiles.indexOf(item.id) < 0) continue;
+      visit_url(URL_PROFILE.format(item.id));
+      save_profile(item.id);
+      visited_profiles.push(item.id);
+      queue = queue.concat(extract_groups());
     }
     else {
-      if(visited_groups.indexOf(item["id"]) < 0) continue;
-      visit_url(URL_GROUP.format(item["id"]));
-      save_group(item["id"]);
-      visited_groups.push(item["id"]);
-      queue.concat(extract_profiles());
+      if(visited_groups.indexOf(item.id) < 0) continue;
+      visit_url(URL_GROUP.format(item.id));
+      save_group(item.id);
+      visited_groups.push(item.id);
+      queue = queue.concat(extract_profiles());
     }
   }
 };
