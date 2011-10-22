@@ -159,14 +159,14 @@ main = function() {
   while(queue.length > 0 && visited_groups.length < 500){
     var item = queue.shift();
     if(item.type === "profile") {
-      if(visited_profiles.indexOf(item.id) < 0) continue;
+      if(visited_profiles.indexOf(item.id) >= 0) continue;
       visit_url(URL_PROFILE.format(item.id));
       save_profile(item.id);
       visited_profiles.push(item.id);
       queue = queue.concat(extract_groups());
     }
     else {
-      if(visited_groups.indexOf(item.id) < 0) continue;
+      if(visited_groups.indexOf(item.id) >= 0) continue;
       visit_url(URL_GROUP.format(item.id));
       save_group(item.id);
       visited_groups.push(item.id);
