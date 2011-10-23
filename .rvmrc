@@ -1,7 +1,0 @@
-# install rubies when used
-rvm_install_on_use_flag=1
-
-# gemsets automatically created when used
-rvm_gemset_create_on_use_flag=1
-
-rvm 1.9.2@jcrawler
