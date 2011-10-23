@@ -86,6 +86,7 @@ save_profile = function(id, source_id) {
   var raw_disc = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof4-lay EXTRACT=HTM", 1);
   var raw_greet = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof6-lay EXTRACT=HTM", 1);
   var raw_test = run("TAG POS=1 TYPE=DIV ATTR=CLASS:prof5-lay EXTRACT=HTM", 1);
+  if(!raw_demo || !raw_qa || !raw_diary || !raw_disc || !raw_greet || !raw_test) return;
   var filename = date_string(new Date())+"_"+id+"_"+source_id+"_{0}.data";
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("demo")), raw_demo);
   write_file(FILE_PATH.format("data/mbga/person/"+filename.format("qa")), raw_qa);
@@ -98,13 +99,15 @@ save_profile = function(id, source_id) {
 
 avatar_url = function() {
   var raw = run("TAG POS=1 TYPE=DIV ATTR=CLASS:lv3-ava-wrap EXTRACT=HTM", 1);
-  var src = raw.match(REGEX_IMGSRC)[0]
+  if(!raw) return "";
+  var src = raw.match(REGEX_IMGSRC)[0];
   return src.substring(5, src.length - 1);
 };
 
 save_group = function(id) {
   var raw_meta = run("TAG POS=1 TYPE=UL ATTR=CLASS:blk-lay EXTRACT=HTM", 1);
   var raw_msg = run("TAG POS=1 TYPE=DIV ATTR=CLASS:crcltopic-lay EXTRACT=HTM", 1);
+  if(!raw_meta || !raw_msg) return;
   var filename = date_string(new Date())+"_"+id+"_{0}.data";
   var path_meta = FILE_PATH.format("data/mbga/group/"+filename.format("meta"));
   var path_msg = FILE_PATH.format("data/mbga/group/"+filename.format("msg"));
@@ -114,6 +117,7 @@ save_group = function(id) {
 
 extract_profiles = function(source_id) {
   var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circlemem-sec EXTRACT=HTM", 1);
+  if(!raw) return [];
   var links = raw.match(REGEX_HREF);
   links.pop(); // last link isn't a profile
   var mod_links = [];
@@ -130,6 +134,7 @@ extract_profiles = function(source_id) {
 
 extract_groups = function() {
   var raw = run("TAG POS=1 TYPE=DIV ATTR=ID:circleentry-sec EXTRACT=HTM", 1);
+  if(!raw) return [];
   var links = raw.match(REGEX_HREF);
   links.pop(); // last link isn't a group link
   var mod_links = [];
