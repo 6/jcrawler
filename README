@@ -1,27 +1,9 @@
 Sites to crawl(?):
-http://mixi.jp
 http://yahoo-mbga.jp
-http://gree.jp (account?)
 http://2ch.net (stats: http://stats.2ch.net/suzume.cgi )
   list of boards: http://menu.2ch.net/bbstable.html
+http://nicovideo.jp (feeds: http://www.nicovideo.jp/rss )
 
 Other possible sites(?):
-http://nicovideo.jp (feeds: http://www.nicovideo.jp/rss )
 http://jp.youtube.com (feeds: http://code.google.com/apis/youtube/2.0/reference.html )
 http://pixiv.net
-
-TODO
-- main loop
-- parse relevant data
-- write data to CSV
-- separate file for inserting CSV into DB
-
-PEOPLE STATS
-- what % use each feature? how much do they use it? (eg how many albums)
-- how does usage % change over time? (eg people started to share more photos)
-- friends: how much variance in location/age/gender/interests?
-- how many people do they actually interact with among their "friends"? who?
-
-GROUP STATS
-- how much activity per group? is there an optimal group size?
-- how much variance in location/age/gender among group members?
