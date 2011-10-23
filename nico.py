@@ -2,6 +2,7 @@
 #-*- encoding:utf-8 -*-
 """
 Heavily based off code from: https://gist.github.com/405010 by Koutarou Chikuba
+API docs: http://dic.nicovideo.jp/a/%E3%83%8B%E3%82%B3%E3%83%8B%E3%82%B3%E5%8B%95%E7%94%BBapi
 """
 import argparse
 import cgi
