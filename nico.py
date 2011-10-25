@@ -37,38 +37,14 @@ def video_info(opener, v_id):
     return False # deleted/invalid video
   tags = dom.getElementsByTagName("tags")[0].getElementsByTagName("tag")
   tags_txt = [tag.childNodes[0].nodeValue for tag in tags]
-  return {
-    "length": xml_txt(dom, "length")
-    , "comment_count": xml_txt(dom, "comment_num")
-    , "view_count": xml_txt(dom, "view_counter")
-    , "mylist_count": xml_txt(dom, "mylist_counter")
-    , "tags": tags_txt
-    , "title": xml_txt(dom, "title")
-    , "description": xml_txt(dom, "description")
-    , "upload_date": xml_txt(dom, "first_retrieve")
-  }
-    
-def thread_info(opener, v_id):
-  res = opener.open("http://www.nicovideo.jp/api/getflv.php?v=sm%s" % str(v_id))
-  doc = res.read()
-  #コメントダウンロード用のurl (エスケープされている)
-  _tmp =re.findall("((?<=ms=)http.*?api)", doc)
-  return {
-    "id": re.findall("(?<=thread_id=)[0-9]+",doc)[0]
-    , "ms_num": re.findall(r"(?<=2F)[0-9]+",_tmp[0])[0]
-  }
-
-def comments(opener, thread_info):
-  send_xml = '<thread res_from="-300" version="20061206" thread="%s" />'% thread_info["id"]
-  url="http://msg.nicovideo.jp/%s/api/" % thread_info["ms_num"]
-  res = opener.open(url,data=send_xml)
-  doc = res.read()
-  
-  comments = []
-  for i in re.findall("<chat.*?>.*?</chat>",doc):
-    raw_comment = re.sub("<.*?>","",i)
-    comments.append(raw_comment)
-  return comments
+  return [
+    xml_txt(dom, "length")
+    , xml_txt(dom, "first_retrieve")
+    , int(xml_txt(dom, "comment_num"))
+    , int(xml_txt(dom, "view_counter"))
+    , int(xml_txt(dom, "mylist_counter"))
+    , int(len(tags_txt))
+  ]
 
 def random_id_not_in(list):
   rand = False
@@ -85,10 +61,11 @@ def main(howmany, email, password, ua):
   while len(visited_videos) < howmany:
     id = random_id_not_in(tried_videos)
     info = video_info(opener, id)
-    print id, info
+    print len(visited_videos), "ID:", id, "INFO:", info
     if info:
-      t_info = thread_info(opener, id)
-      c = comments(opener, t_info)
+      info = map(str, info)
+      with open("data/nico/{0}.data".format(id), 'w') as f:
+        f.write('\n'.join(info))
       visited_videos.append(id)
     tried_videos.append(id)
     sleep(random.randrange(3, 8, 1))
