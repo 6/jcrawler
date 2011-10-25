@@ -15,10 +15,10 @@ import random
 from time import sleep
 from xml.dom.minidom import parseString
 
-def url_opener(username, password):
+def url_opener(username, password, ua):
   cj = cookielib.CookieJar()
   opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-  #opener.addheaders = [('User-agent', 'Mozilla/5.0 ABCDEF')]
+  opener.addheaders = [('User-agent', ua)]
   req = urllib2.Request("https://secure.nicovideo.jp/secure/login?site=niconico")
   account = {"mail": username, "password": password}
   req.add_data(urllib.urlencode(account.items()))
@@ -78,8 +78,8 @@ def random_id_not_in(list):
       rand = False
   return rand
 
-def main(howmany, email, password):
-  opener = url_opener(email, password)
+def main(howmany, email, password, ua):
+  opener = url_opener(email, password, ua)
   tried_videos = [] # includes deleted/invalid videos
   visited_videos = []
   while len(visited_videos) < howmany:
@@ -98,5 +98,6 @@ if __name__=="__main__":
   parser.add_argument('-e','--email', required=True)
   parser.add_argument('-p', '--password', required=True)
   parser.add_argument('-n', '--howmany', required=True, type=int)
+  parser.add_argument('--useragent', required=True)
   args = parser.parse_args()
-  main(args.howmany, args.email, args.password)
+  main(args.howmany, args.email, args.password, args.useragent)
