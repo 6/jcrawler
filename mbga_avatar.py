@@ -13,9 +13,11 @@ def avatar_info(path='data/mbga/person/'):
   for f in glob.glob(os.path.join(path, '*_img.data')):
     name_parts = f.split("/")[-1].split("_")
     datetime, user_id = name_parts[0], name_parts[1]
+    url = open(f, 'r').read()
+    emotion = url.split("/")[-1].split("-")[-1].split(".")[0]
     info.append({
-      "save": "data/mbga/avatar/{0}_{1}.gif".format(datetime, user_id)
-      , "url": open(f, 'r').read()
+      "save":"data/mbga/avatar/{0}_{1}_{2}.gif".format(datetime,user_id,emotion)
+      , "url":url
     })
   return info
   
