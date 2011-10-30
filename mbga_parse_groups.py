@@ -1,9 +1,17 @@
+#-*- encoding:utf-8 -*-
 """
 Parse MBGA data to generate statistics.
 """
 import glob
 import os
+import re
+from datetime import datetime
 DATA_PATH = "data/mbga/{0}/"
+PERMISSIONS = {
+  "メンバー全員": 1 # all members
+  ,"主催者+副管理": 2 # sponsors and moderators
+  ,"主催者のみ": 3 # sponsors
+}
 
 def analyze_groups():
   group_files = glob.glob(os.path.join(DATA_PATH.format('group'), '*.data'))
@@ -15,10 +23,17 @@ def analyze_groups():
   print "n groups: {0}".format(len(groups))
 
 def meta_parser(data):
-  return [] # TODO
+  meta = re.findall("<li>([^<]+)</li>", data)
+  meta = map(lambda x: x.split("：")[1], meta)
+  # return [number of members, permissions]
+  return meta[0].split("人")[0], PERMISSIONS[meta[2]]
 
 def msg_parser(data):
-  return [] # TODO
+  messages = []
+  msg = re.findall("<span class=\"timealert\"><span>([^>]+)</span>", data)
+  for m in msg:
+    messages.append(datetime.strptime(m, "%Y/%m/%d %H:%M"))
+  return messages
 
 def parse(data_path, parser):
   f = open(data_path, 'r').read()
