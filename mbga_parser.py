@@ -48,7 +48,6 @@ def analyze_groups():
     if g[3] is 0: continue
     members_dist = g[3]
     scaled_members_dist = (members_dist - min_members_dist) / (max_members_dist - min_members_dist) * 0.99 + 0.01
-    print members_dist,"->",scaled_members_dist
     groups[i][3] = scaled_members_dist
     
   print "n groups: {0}".format(len(groups))
