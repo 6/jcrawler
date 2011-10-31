@@ -67,7 +67,74 @@ def msg_parser(path, data):
     extracted = path.split("/")[-1].split("_")[0]
     time_extracted = datetime.strptime(extracted, "%Y%m%d%H%M%S")
     oldest = datetime.strptime(msg[-1], "%Y/%m/%d %H:%M")
-    dist = time_extracted - oldest #TODO to seconds
+    dist = time_extracted - oldest
+    dist = (dist.days * 86400) + dist.seconds
+  return dist
+
+def analyze_people():
+  ids = people_ids()
+  mins = {'diary':None, 'greet':None, 'disc':None, 'test':None}
+  maxs = {'diary':0, 'greet':0, 'disc':0, 'test':0}
+  people = []
+  for i,id in enumerate(ids):
+    # gather all data files associated with a specific person ID
+    p_files = files('person', '*_{0}_*.data'.format(id))
+    data = {}
+    for f in p_files:
+      ftype = f.split("_")[-1].split(".")[0]
+      if ftype == "demo":
+        data['age'] = parse(f, demographics_parser)
+      elif ftype in ["diary","greet","disc","test"]:
+        dist = parse(f, time_dist_parser)
+        data[ftype] = dist
+        if dist and (mins[ftype] is None or dist < mins[ftype]):
+          mins[ftype] = dist
+        if dist and dist > maxs[ftype]:
+          maxs[ftype] = dist
+    people.append(data)
+  
+  people_csv = []
+  for i,person in enumerate(people):
+    person_csv = []
+    for dtype,value in person.items():
+      if dtype == "age" or not value:
+        if not value: value = 0
+        person_csv.append((dtype, value))
+        continue
+      dist = float(value)
+      scaled_dist = 1 - ((dist - mins[dtype])/(maxs[dtype] - mins[dtype])*0.99)
+      person_csv.append((dtype, scaled_dist))
+    person_csv.sort()
+    people_csv.append(map(lambda x: x[-1], person_csv))
+  headers = ('age', 'diary', 'disc', 'greet', 'intro')
+  write_csv('mbga_people.csv', headers, people_csv)
+
+def people_ids():
+  people_files = files('person', '*.data')
+  n_people = len(people_files)/7
+  people_ids = []
+  id_regex = re.compile("[0-9]+_([0-9]+)_[0-9]+")
+  for f in people_files:
+    m = id_regex.search(f)
+    people_ids.append(m.group(1))
+  return set(people_ids)
+
+def demographics_parser(path, data):
+  data = data.split("<dt>")
+  age = -1
+  for d in data:
+    if d.startswith ("誕生日(年齢)"): # birthdate (age)
+      age = re.findall("[0-9]+", re.findall("<dd>([^<]+)</dd>", d)[0])[-1]
+  return age
+
+def time_dist_parser(path, data):
+  dist = False
+  extracted = path.split("/")[-1].split("_")[0]
+  time_extracted = datetime.strptime(extracted, "%Y%m%d%H%M%S") 
+  dates = re.findall("[0-9]{4}/[0-9]+/[0-9]+ [0-9]+:[0-9]+", data)
+  if dates:
+    oldest = datetime.strptime(dates[-1], "%Y/%m/%d %H:%M")
+    dist = time_extracted - oldest
     dist = (dist.days * 86400) + dist.seconds
   return dist
 
@@ -87,4 +154,5 @@ def write_csv(fname, headers, list_of_lists):
   f.close()
   
 if __name__=="__main__":
-  analyze_groups()
+  #analyze_groups()
+  analyze_people()
