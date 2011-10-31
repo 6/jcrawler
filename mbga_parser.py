@@ -29,7 +29,7 @@ def analyze_groups():
   min_dist, max_dist = None, 0
   for i in range(1, len(group_files), 2):
     n_members, permissions = parse(group_files[i-1], meta_parser)
-    dist = parse(group_files[i], msg_parser)
+    dist = parse(group_files[i], time_dist_parser)
     if dist and dist > max_dist:
       max_dist = dist
     if dist and (dist < min_dist or min_dist is None):
@@ -68,17 +68,6 @@ def meta_parser(path, data):
   meta = map(lambda x: x.split("：")[1], meta)
   # return [number of members, permissions]
   return int(meta[0].split("人")[0]), PERMISSIONS[meta[2]]
-
-def msg_parser(path, data):
-  dist = False # default if no messages posted
-  msg = re.findall("<span class=\"timealert\"><span>([^>]+)</span>", data)
-  if msg:
-    extracted = path.split("/")[-1].split("_")[0]
-    time_extracted = datetime.strptime(extracted, "%Y%m%d%H%M%S")
-    oldest = datetime.strptime(msg[-1], "%Y/%m/%d %H:%M")
-    dist = time_extracted - oldest
-    dist = (dist.days * 86400) + dist.seconds
-  return dist
 
 def analyze_people():
   ids = people_ids()
