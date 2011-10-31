@@ -6,12 +6,21 @@ import glob
 import os
 import re
 import csv
+import numpy
+from PIL import Image
 from datetime import datetime
 DATA_PATH = "data/mbga/{0}/"
 PERMISSIONS = {
   "メンバー全員": 1 # all members
   ,"主催者+副管理": 2 # sponsors and moderators
   ,"主催者のみ": 3 # sponsors
+}
+EMOTIONS = {
+  "normal": 1
+  ,"shy": 2
+  ,"smile": 3
+  ,"angry": 4
+  ,"cry": 5
 }
 
 def analyze_groups():
@@ -138,6 +147,18 @@ def time_dist_parser(path, data):
     dist = (dist.days * 86400) + dist.seconds
   return dist
 
+def analyze_avatars():
+  avatars = files('avatar', '*.png')
+  data = []
+  for i,a in enumerate(avatars):
+    pic = numpy.array(Image.open(a))
+    num_black_pixels = len(numpy.where(pic[0:1][0:1] == 0)[0])
+    bg_mod = 0 if num_black_pixels == 150 else 1
+    emotion = a.split("/")[-1].split("_")[-1].split(".")[0]
+    data.append([EMOTIONS[emotion], bg_mod])
+  headers = ("emotion", "bg_mod")
+  write_csv('mbga_avatars.csv', headers, data)
+    
 def parse(data_path, parser):
   f = open(data_path, 'r').read()
   return parser(data_path, f)
@@ -155,4 +176,5 @@ def write_csv(fname, headers, list_of_lists):
   
 if __name__=="__main__":
   #analyze_groups()
-  analyze_people()
+  #analyze_people()
+  analyze_avatars()
