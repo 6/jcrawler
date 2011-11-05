@@ -12,7 +12,7 @@ def analyze_nico():
     f = open(fpath, 'r')
     data.append(data_parser(f.read(), fpath))
     f.close()
-  headers = ("length", "comments", "views", "mylists", "tags")
+  headers = ("length", "tags", "comments", "views", "mylists")
   write_csv("nico.csv", headers, data)
     
 def data_parser(raw, fpath):
