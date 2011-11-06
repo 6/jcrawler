@@ -12,21 +12,21 @@ def analyze_2ch():
   num_messages = 0
   for i,fpath in enumerate(files):
     thread_id = fpath.split("_")[-1].split(".")[0]
-    extracted = fpath.split("/")[-1].split("_")[0]
-    time_extracted = datetime.strptime(extracted, "%Y%m%d%H%M%S")
+    extracted_on = fpath.split("/")[-1].split("_")[0]
+    extracted_on = datetime.strptime(extracted_on, "%Y%m%d%H%M%S")
     print i+1,"of",len(files),fpath
     f = open(fpath, 'r').read()
-    messages[thread_id] = thread_parser(f)
+    messages[thread_id] = thread_parser(f, extracted_on)
     num_messages += len(messages[thread_id])
   print "Analyzed {0} messages".format(num_messages)
 
-def thread_parser(raw_data):
+def thread_parser(raw_data, extracted_on):
   thread = []
   messages = raw_data.split("<dt>")
   messages.pop(0) # this first item is not a message
   for m in messages:
     meta, msg = m.split("<dd>")
-    meta_data = meta_parser(meta)
+    meta_data = meta_parser(meta, extracted_on)
     if not meta_data:
       continue
     data = message_parser(msg, meta_data)
@@ -34,7 +34,7 @@ def thread_parser(raw_data):
   return thread
 
 # Parse message meta-data. Returns False if invalid.
-def meta_parser(raw):
+def meta_parser(raw, extracted_on):
   meta = re.sub(r" (ID:[^<]+)?</dt>", "", raw)
   meta = meta.split("\x81F") # Shift-JIS colon character
   message_id = int(meta[0].strip())
@@ -49,22 +49,31 @@ def meta_parser(raw):
   else:
     # When message is deleted, the date is deleted as well.
     return False
+  try:
+    created_on = datetime.strptime(date, "%Y/%m/%d %H:%M")
+  except ValueError:
+    # In one case, messages have an invalid date of "2006/03/32".
+    return False
+    
+  age = extracted_on - created_on
+  est_jst_diff = 13*60*60 # time diff between EST and Japan time (13 hours)
+  age = (age.days * 86400) + age.seconds + est_jst_diff
+  if age < 0:
+    # in one case, an invalid date lists the year as "2665"
+    return False
   
   name_string = "".join(meta[1:-1])
   name = name_string.split("<b>")[1].split("</b>")[0]
   email = REGEX_EMAIL.search(name_string)
   has_email = 1 if email else 0
 
-  try:
-    return {
-      "id": message_id
-      ,"datetime": datetime.strptime(date, "%Y/%m/%d %H:%M")
-      ,"name": name
-      ,"valid_email": has_email
-    }
-  except ValueError:
-    # In one case, messages have an invalid date of "2006/03/32".
-    return False
+  return {
+    "id": message_id
+    ,"year": created_on.year
+    ,"age": age
+    ,"name": name
+    ,"valid_email": has_email
+  }
 
 def message_parser(raw, data):
   msg = re.sub(r"<br><br> </dd>(</dl>)?", "", raw)
