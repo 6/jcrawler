@@ -7,11 +7,18 @@ from datetime import datetime
 
 def analyze_nico():
   files = glob.glob(os.path.join("data/nico/", "*.data"))
-  data = []
+  data, todo = [], []
   for i,fpath in enumerate(files):
     f = open(fpath, 'r')
-    data.append(data_parser(f.read(), fpath))
+    final_data, todo_data = data_parser(f.read(), fpath)
+    data.append(final_data)
+    todo.append(todo_data)
     f.close()
+
+  scaled = scale(todo)
+  for i in range(len(data)):
+    data[i].extend(scaled[i])
+  
   headers = ("length", "tags", "comments", "views", "mylists")
   write_csv("nico.csv", headers, data)
     
@@ -29,8 +36,29 @@ def data_parser(raw, fpath):
     dist = extracted_on - created_on
     dist = (dist.days * 86400) + dist.seconds
     
-    return [length, int(tags), float(comments)/dist, float(views)/dist, float(mylists)/dist]
+    return [length, int(tags)], [float(comments)/dist, float(views)/dist, float(mylists)/dist]
   
+def scale(data):
+  num_points = len(data[0])
+  mins, maxes = [None]*num_points, [0]*num_points
+  for d in data:
+    for i,val in enumerate(d):
+      if (not mins[i] or val < mins[i]) and mins[i] != 0:
+        mins[i] = val
+      if val > maxes[i]:
+        maxes[i] = val
+
+  scaled_data = []
+  for d in data:
+    scaled = []
+    for i,val in enumerate(d):
+      dist = float(val)
+      # scale from 0-1, where 1 = highest activity, 0 = lowest
+      scaled_dist = (dist - mins[i]) / (maxes[i] - mins[i])
+      scaled.append(scaled_dist)
+    scaled_data.append(scaled)
+  return scaled_data
+
 def write_csv(fname, headers, list_of_lists):
   f = open(fname, 'wb')
   writer = csv.writer(f)
