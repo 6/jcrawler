@@ -36,7 +36,9 @@ def data_parser(raw, fpath):
     dist = extracted_on - created_on
     dist = (dist.days * 86400) + dist.seconds
     
-    return [length, int(tags)], [float(comments)/dist, float(views)/dist, float(mylists)/dist]
+    # divide comments, views, mylists by amount of time passed and video length 
+    div = dist * length 
+    return [length, int(tags)], [float(comments)/div, float(views)/div, float(mylists)/div]
   
 def scale(data):
   num_points = len(data[0])
