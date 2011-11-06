@@ -52,9 +52,9 @@ def analyze_2ch():
   message_data = []
   for thread_id in messages:
     for m in messages[thread_id]:
-      message_data.append([m["name"], m["valid_email"], m["year"], m["age"]])
+      message_data.append([m["name"], m["valid_email"], m["year"], m["age"], m["replies"]])
   
-  headers = ("name", "email", "year", "age")
+  headers = ("name", "email", "year", "age", "replies")
   write_csv("2ch.csv", headers, message_data)
 
 def thread_parser(raw_data, extracted_on):
@@ -66,7 +66,12 @@ def thread_parser(raw_data, extracted_on):
     meta_data = meta_parser(meta, extracted_on)
     if not meta_data:
       continue
-    data = message_parser(msg, meta_data)
+    data, reply_to = message_parser(msg, meta_data)
+    for message_id in reply_to:
+      for i,msg in enumerate(thread):
+        if msg["id"] == message_id:
+          thread[i]["replies"] += 1
+          break
     thread.append(data)
   return thread
 
@@ -110,14 +115,20 @@ def meta_parser(raw, extracted_on):
     ,"age": age
     ,"name": name
     ,"valid_email": has_email
+    ,"replies": 0
   }
 
 def message_parser(raw, data):
   msg = re.sub(r"<br><br> </dd>(</dl>)?", "", raw)
   msg = re.sub(r" <br> ", "", msg) # remove inline linebreaks
   msg = msg.strip()
-  # TODO
-  return data
+    
+  reply_to = re.findall("read.cgi/[^/]+/[0-9]+/([0-9]+)", msg)
+  reply_to = map(int, list(set(reply_to)))
+  # remove invalid replies to comments that haven't been posted yet
+  reply_to = [r for r in reply_to if r < data["id"]]
+  
+  return [data, reply_to]
 
 def write_csv(fname, headers, list_of_lists):
   f = open(fname, 'wb')
