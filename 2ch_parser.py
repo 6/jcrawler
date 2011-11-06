@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import csv
+import operator
 from datetime import datetime
 # Source: http://stackoverflow.com/questions/3217682/checking-validity-of-email-in-django-python
 REGEX_EMAIL = re.compile("[\w\.-]+@[\w\.-]+\.\w{2,4}")
@@ -19,6 +20,42 @@ def analyze_2ch():
     messages[thread_id] = thread_parser(f, extracted_on)
     num_messages += len(messages[thread_id])
   print "Analyzed {0} messages".format(num_messages)
+  
+  visited = []
+  for fpath in files:
+    # determine default "anonymous" name (varies by board/subdomain)
+    key = fpath.split("_")
+    key = "{0}_{1}".format(key[1], key[2])
+    if key in visited:
+      continue
+    visited.append(key)
+    threads = glob.glob(os.path.join("data/2ch/", "*_{0}_*.data".format(key)))
+    names = {}
+    for t in threads:
+      thread_id = t.split("_")[-1].split(".")[0]
+      for m in messages[thread_id]:
+        if m["name"] not in names:
+          names[m["name"]] = 1
+        else:
+          names[m["name"]] += 1
+    sorted_names = sorted(names.iteritems(), key=operator.itemgetter(1))
+    default_name = sorted_names[-1][0]
+    
+    # convert name string --> bool: if user has custom name or just "anonymous"
+    for t in threads:
+      thread_id = t.split("_")[-1].split(".")[0]
+      for i,m in enumerate(messages[thread_id]):
+        has_custom_name = 0 if m["name"] == default_name else 1
+        messages[thread_id][i]["name"] = has_custom_name
+  
+  # convert dict into a list so can write to CSV
+  message_data = []
+  for thread_id in messages:
+    for m in messages[thread_id]:
+      message_data.append([m["name"], m["valid_email"], m["year"], m["age"]])
+  
+  headers = ("name", "email", "year", "age")
+  write_csv("2ch.csv", headers, message_data)
 
 def thread_parser(raw_data, extracted_on):
   thread = []
