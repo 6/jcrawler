@@ -52,9 +52,9 @@ def analyze_2ch():
   message_data = []
   for thread_id in messages:
     for m in messages[thread_id]:
-      message_data.append([m["name"], m["valid_email"], m["year"], m["age"], m["replies"]])
+      message_data.append([m["name"], m["valid_email"], m["year"], m["age"], m["replies"], m["length"]])
   
-  headers = ("name", "email", "year", "age", "replies")
+  headers = ("name", "email", "year", "age", "replies", "length")
   write_csv("2ch.csv", headers, message_data)
 
 def thread_parser(raw_data, extracted_on):
@@ -122,7 +122,8 @@ def message_parser(raw, data):
   msg = re.sub(r"<br><br> </dd>(</dl>)?", "", raw)
   msg = re.sub(r" <br> ", "", msg) # remove inline linebreaks
   msg = msg.strip()
-    
+  data["length"] = len(msg)  
+  
   reply_to = re.findall("read.cgi/[^/]+/[0-9]+/([0-9]+)", msg)
   reply_to = map(int, list(set(reply_to)))
   # remove invalid replies to comments that haven't been posted yet
