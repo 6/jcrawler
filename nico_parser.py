@@ -19,7 +19,7 @@ def analyze_nico():
   for i in range(len(data)):
     data[i].extend(scaled[i])
   
-  headers = ("length", "tags", "comments", "views", "mylists")
+  headers = ("length", "tags", "year", "comments", "views", "mylists")
   write_csv("nico.csv", headers, data)
     
 def data_parser(raw, fpath):
@@ -38,7 +38,7 @@ def data_parser(raw, fpath):
     
     # divide comments, views, mylists by amount of time passed and video length 
     div = dist * length 
-    return [length, int(tags)], [float(comments)/div, float(views)/div, float(mylists)/div]
+    return [length, int(tags), created_on.year], [float(comments)/div, float(views)/div, float(mylists)/div]
   
 def scale(data):
   num_points = len(data[0])
