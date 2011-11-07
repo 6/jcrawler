@@ -16,17 +16,20 @@ def analyze(csv_file):
   x_by_y(messages, "name", "year")
   x_by_y(messages, "email", "year")
   x_by_y(messages, "length", "year")
-  x_by_y(messages, "name", "replies")
-  x_by_y(messages, "email", "replies")
-  x_by_y(messages, "length", "replies")
+  x_by_y(messages, "name", "replies", 5)
+  x_by_y(messages, "email", "replies", 5)
+  x_by_y(messages, "length", "replies", 5)
 
-def x_by_y(messages, x, y):
+def x_by_y(messages, x, y, max_y=None):
   x_totals = {}
   for m in messages:
-    if m[y] not in x_totals:
-      x_totals[m[y]] = {"count": 0, "val": 0}
-    x_totals[m[y]]["val"] += m[x]
-    x_totals[m[y]]["count"] += 1
+    new_y = m[y]
+    if max_y and new_y > max_y:
+      new_y = max_y + 1
+    if new_y not in x_totals:
+      x_totals[new_y] = {"count": 0, "val": 0}
+    x_totals[new_y]["val"] += m[x]
+    x_totals[new_y]["count"] += 1
 
   data = []
   total_x, total_count = 0, 0
