@@ -11,30 +11,33 @@ def analyze(csv_file):
   for line in lines:
     name, email, year, age, replies, length = map(int, line.split(","))
     messages.append({"name": name, "email": email, "year": year, "age": age, "replies": replies, "length": length})
-  print "Done parsing CSV"
+  print "Done parsing CSV {0} messages".format(len(messages))
 
-  x_by_year(messages, "name")
-  x_by_year(messages, "email")
-  x_by_year(messages, "length")
+  x_by_y(messages, "name", "year")
+  x_by_y(messages, "email", "year")
+  x_by_y(messages, "length", "year")
+  x_by_y(messages, "name", "replies")
+  x_by_y(messages, "email", "replies")
+  x_by_y(messages, "length", "replies")
 
-def x_by_year(messages, x):
-  x_year_totals = {}
+def x_by_y(messages, x, y):
+  x_totals = {}
   for m in messages:
-    if m["year"] not in x_year_totals:
-      x_year_totals[m["year"]] = {"count": 0, "val": 0}
-    x_year_totals[m["year"]]["val"] += m[x]
-    x_year_totals[m["year"]]["count"] += 1
-  
+    if m[y] not in x_totals:
+      x_totals[m[y]] = {"count": 0, "val": 0}
+    x_totals[m[y]]["val"] += m[x]
+    x_totals[m[y]]["count"] += 1
+
   data = []
   total_x, total_count = 0, 0
-  for year in x_year_totals:
-    totals = x_year_totals[year]
-    data.append([year, float(totals["val"]) / totals["count"]])
+  for y_val in x_totals:
+    totals = x_totals[y_val]
+    data.append([y_val, float(totals["val"]) / totals["count"]])
     total_x += totals["val"]
     total_count += totals["count"]
   
   print "{0} total={1}, avg={2}".format(x, total_x, float(total_x)/total_count)
-  write_csv("2ch_{0}_year.csv".format(x), ("year", x), data)
+  write_csv("2ch_{0}_{1}.csv".format(x, y), (y, x), data)
   
 def write_csv(fname, headers, list_of_lists):
   f = open(fname, 'wb')
