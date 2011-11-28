@@ -19,6 +19,7 @@ def analyze(csv_file):
   x_by_y(messages, "name", "replies", 5)
   x_by_y(messages, "email", "replies", 5)
   x_by_y(messages, "length", "replies", 5)
+  std_dev(messages, "length")
 
 def x_by_y(messages, x, y, max_y=None):
   x_totals = {}
@@ -41,6 +42,18 @@ def x_by_y(messages, x, y, max_y=None):
   
   print "{0} total={1}, avg={2}".format(x, total_x, float(total_x)/total_count)
   write_csv("2ch_{0}_{1}.csv".format(x, y), (y, x), data)
+  
+def std_dev(messages, x):
+  x_total = 0
+  for m in messages:
+    x_total += m[x]
+  x_mean = float(x_total) / len(messages)
+ 
+  x_diffs = 0
+  for m in messages:
+    x_diffs += (m[x] - x_mean)**2
+  sd = (float(x_diffs) / len(messages))**0.5
+  print "Std dev of {0}={1}".format(x, sd)
   
 def write_csv(fname, headers, list_of_lists):
   f = open(fname, 'wb')
